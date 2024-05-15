@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  azure-sql-edge:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    environment:
+      SA_PASSWORD: "<<CHANGEIT>>"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+  promo-code-api:
+    image: promo-code-api
+    build:
+      context: .
+      dockerfile: PromoCode.API/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: false
+    depends_on:
+      - azure-sql-edge
