@@ -36,6 +36,8 @@ public class Program
 
         builder.Services.AddScoped<IPromotionalCodeRepository, PromotionalCodeRepository>();
         builder.Services.AddScoped<IPromotionalCodeService, PromotionalCodeService>();
+        builder.Services.AddScoped<ICacheRepository, RedisCacheRepository>();
+        builder.Services.AddScoped<ICacheService, RedisCacheService>();
         // InstallServicesByReflection(builder.Services, "Repository");
         // InstallServicesByReflection(builder.Services, "Service");
         

@@ -39,7 +39,7 @@ public class PromoCodeController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code.</param>
     /// <returns>The requested promotional code.</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<PromotionalCode>> GetPromotionalCode(Guid id)
     {
         return await _promotionalCodeService.GetPromotionalCode(id);
@@ -64,7 +64,7 @@ public class PromoCodeController : ControllerBase
     /// <param name="id">The unique identifier of the promotional code to update.</param>
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>The updated promotional code.</returns>
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult<PromotionalCode>> UpdatePromotionalCode(int id, PromotionalCode promotionalCode)
     {
         return await _promotionalCodeService.UpdatePromotionalCode(id, promotionalCode);
@@ -76,7 +76,7 @@ public class PromoCodeController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to delete.</param>
     /// <returns>No content.</returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeletePromotionalCode(Guid id)
     {
         await _promotionalCodeService.DeletePromotionalCode(id);
@@ -89,7 +89,7 @@ public class PromoCodeController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to redeem.</param>
     /// <returns>The redeemed promotional code.</returns>
-    [HttpGet("{id}/redeem")]
+    [HttpGet("{id:guid}/redeem")]
     public async Task<ActionResult<PromotionalCode>> RedeemPromotionalCode(Guid id)
     {
         return await _promotionalCodeService.RedeemPromotionalCode(id);
