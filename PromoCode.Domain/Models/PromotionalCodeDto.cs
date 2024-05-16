@@ -1,8 +1,13 @@
+using System.Text.Json.Serialization;
 using Chrominsky.Utils.Models.Base;
 using Newtonsoft.Json;
+using PromoCode.Domain.Enums;
 
 namespace PromoCode.Domain.Models;
 
+/// <summary>
+/// Represents a DTO for promotional codes.
+/// </summary>
 public class PromotionalCodeDto : BaseEntity
 {
     /// <summary>
@@ -33,5 +38,6 @@ public class PromotionalCodeDto : BaseEntity
     /// Gets or sets the status of the promotional code.
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
-    public string? Status { get; set; }
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public StatusEnum? Status { get; set; }
 }

@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using Chrominsky.Utils.Models.Base;
+using PromoCode.Domain.Enums;
 
 namespace PromoCode.Domain.Models
 {
@@ -39,6 +40,7 @@ namespace PromoCode.Domain.Models
         /// Gets or sets the status of the promotional code.
         /// </summary>
         [Required]
-        public string Status { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public StatusEnum Status { get; set; }
     }
 }

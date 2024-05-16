@@ -20,6 +20,14 @@ public interface IPromotionalCodeRepository
     /// <returns>An asynchronous task that returns a nullable PromotionalCode.</returns>
     Task<PromotionalCode?> GetPromotionalCodeByIdAsync(Guid id);
 
+    /// <summary>
+    /// Retrieves a promotional code by its unique code.
+    /// </summary>
+    /// <param name="code">The unique code of the promotional code.</param>
+    /// <returns>
+    /// An asynchronous task that returns a nullable PromotionalCode.
+    /// If the code does not exist in the repository, the method will return null.
+    /// </returns>
     Task<PromotionalCode?> GetPromotionalCodeByCodeAsync(string code);
 
     /// <summary>
@@ -35,13 +43,26 @@ public interface IPromotionalCodeRepository
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>An asynchronous task that returns the updated PromotionalCode.</returns>
     Task<PromotionalCode> UpdatePromotionalCodeAsync(PromotionalCode? promotionalCode);
-
+    
     /// <summary>
-    /// Deletes a promotional code from the repository by its unique identifier.
+    /// Deletes a promotional code from the repository.
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to be deleted.</param>
-    /// <returns>An asynchronous task.</returns>
+    /// <param name="updatedBy">The identifier of the user or process that initiated the deletion.</param>
+    /// <returns>
+    /// An asynchronous task that does not return any value.
+    /// If the promotional code with the specified id does not exist in the repository, the method will not throw an exception.
+    /// </returns>
     Task DeletePromotionalCodeAsync(Guid id, string updatedBy);
 
+    /// <summary>
+    /// Checks the availability of a promotional code in the repository.
+    /// </summary>
+    /// <param name="code">The unique code of the promotional code to be checked.</param>
+    /// <returns>
+    /// An asynchronous task that returns a nullable integer.
+    /// If the code exists in the repository, the method will return the count of occurrences.
+    /// If the code does not exist in the repository, the method will return null.
+    /// </returns>
     Task<int?> CheckCodeAvailability(string code);
 }
