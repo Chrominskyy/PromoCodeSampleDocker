@@ -40,9 +40,9 @@ public class PromoCodeController : ControllerBase
     [HttpGet]
     [SwaggerOperation(Summary = "Gets all active promotional codes.")]
     [SwaggerResponse(200, "A collection of active promotional codes.", typeof(IEnumerable<PromotionalCodeDto>))]
-    public async Task<IEnumerable<PromotionalCodeDto>> GetPromotionalCodes()
+    public async Task<ActionResult<IEnumerable<PromotionalCodeDto>>> GetPromotionalCodes()
     {
-        return await _promotionalCodeService.GetActivePromotionalCodes();
+        return Ok(await _promotionalCodeService.GetActivePromotionalCodes());
     }
     
     /// <summary>

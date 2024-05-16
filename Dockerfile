@@ -7,6 +7,7 @@ COPY PromoCode.API/PromoCode.API.csproj PromoCode.API/
 COPY PromoCode.Application/PromoCode.Application.csproj PromoCode.Application/
 COPY PromoCode.Domain/PromoCode.Domain.csproj PromoCode.Domain/
 COPY PromoCode.Infrastructure/PromoCode.Infrastructure.csproj PromoCode.Infrastructure/
+COPY Chrominsky.Utils/Chrominsky.Utils.csproj Chrominsky.Utils/
 RUN dotnet restore "PromoCode.API/PromoCode.API.csproj"
 
 # Copy the remaining source code and build the project

@@ -55,9 +55,13 @@ public class PromotionalCodeService : IPromotionalCodeService
 
 
     /// <inheritdoc />
-    public async Task<PromotionalCode> UpdatePromotionalCode(PromotionalCodeDto promotionalCode)
+    public async Task<PromotionalCodeDto> UpdatePromotionalCode(PromotionalCodeDto promotionalCode)
     {
-        return await _promotionalCodeRepository.UpdatePromotionalCodeAsync(_baseMapper.ToEntity(promotionalCode));
+        return _baseMapper.ToDto(
+            await _promotionalCodeRepository.UpdatePromotionalCodeAsync(
+                _baseMapper.ToEntity(promotionalCode)
+            )
+        );
     }
 
     /// <inheritdoc />

@@ -36,7 +36,7 @@ public interface IPromotionalCodeService
     /// This method will update the existing promotional code with the provided data.
     /// It will not create a new promotional code if the unique identifier does not exist.
     /// </remarks>
-    Task<PromotionalCode> UpdatePromotionalCode(PromotionalCodeDto promotionalCode);
+    Task<PromotionalCodeDto> UpdatePromotionalCode(PromotionalCodeDto promotionalCode);
     
     /// <summary>
     /// Deletes a promotional code by its unique identifier.

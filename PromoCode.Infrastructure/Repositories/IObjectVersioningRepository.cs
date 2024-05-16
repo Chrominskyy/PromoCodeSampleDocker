@@ -1,4 +1,3 @@
-using Chrominsky.Utils.Repositories.Base;
 using PromoCode.Domain.Models;
 
 namespace PromoCode.Infrastructure.Repositories;
