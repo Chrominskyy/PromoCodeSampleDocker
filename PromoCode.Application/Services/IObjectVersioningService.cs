@@ -7,16 +7,13 @@ namespace PromoCode.Application.Services;
 /// </summary>
 public interface IObjectVersioningService
 {
+    
     /// <summary>
-    /// Adds a new version of an object.
+    /// Adds a new version of an object to the versioning system.
     /// </summary>
-    /// <param name="objectType">The type of the object.</param>
-    /// <param name="objectId">The unique identifier of the object.</param>
-    /// <param name="objectTenant">The tenant identifier of the object.</param>
-    /// <param name="beforeValue">The value of the object before the update.</param>
-    /// <param name="afterValue">The value of the object after the update.</param>
-    /// <param name="updatedBy">The user who performed the update.</param>
-    Task AddVersion(string objectType, Guid objectId, Guid objectTenant, string? beforeValue, string? afterValue, string updatedBy);
+    /// <param name="objectVersion">The <see cref="ObjectVersioning"/> object representing the new version.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task AddVersion(ObjectVersioning objectVersion);
     
     /// <summary>
     /// Retrieves all versions of an object for a specific tenant.

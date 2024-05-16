@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using PromoCode.Application.Services;
 using PromoCode.Domain.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -22,29 +23,18 @@ public class ObjectVersioningController : ControllerBase
     {
         _objectVersioningService = objectVersioningService;
     }
-
+    
     /// <summary>
     /// Adds a new version for an object.
     /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="objectId">ID of the object.</param>
-    /// <param name="objectTenant">Tenant ID of the object.</param>
-    /// <param name="beforeValue">Value before update.</param>
-    /// <param name="afterValue">Value after update.</param>
-    /// <param name="updatedBy">ID of the user who updated the object.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <param name="version">The object version to be added. This parameter is required.</param>
+    /// <returns>An IActionResult indicating the success of the operation. If successful, it returns a 200 OK status code.</returns>
     [HttpPost]
     [SwaggerOperation(Summary = "Adds a new version for an object.")]
     [SwaggerResponse(200, "The version was added successfully.")]
-    public async Task<IActionResult> AddVersion(
-        [FromQuery] string objectType, 
-        [FromQuery] Guid objectId, 
-        [FromQuery] Guid objectTenant, 
-        [FromQuery] string? beforeValue, 
-        [FromQuery] string? afterValue, 
-        [FromQuery] string updatedBy)
+    public async Task<IActionResult> AddVersion([FromBody][Required] ObjectVersioning version)
     {
-        await _objectVersioningService.AddVersion(objectType, objectId, objectTenant, beforeValue, afterValue, updatedBy);
+        await _objectVersioningService.AddVersion(version);
         return Ok();
     }
 

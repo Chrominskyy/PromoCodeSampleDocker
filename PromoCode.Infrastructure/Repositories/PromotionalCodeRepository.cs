@@ -32,6 +32,7 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
                     x => x.Status == StatusEnum.Active
                     && !x.IsDeleted
                 )
+                .OrderByDescending(x => x.UpdatedAt)
                 .ToListAsync();
         return new List<PromotionalCode>();
     }

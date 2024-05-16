@@ -31,6 +31,7 @@ public class ObjectVersioningRepository : IObjectVersioningRepository
                          && x.ObjectTenant == objectTenant
                          && x.ObjectId == objectId
                 )
+                .OrderByDescending(x => x.UpdatedOn)
                 .ToListAsync();
         return new List<ObjectVersioning>();
     }
@@ -58,12 +59,17 @@ public class ObjectVersioningRepository : IObjectVersioningRepository
     /// <inheritdoc />
     public async Task<IEnumerable<ObjectVersioning>> GetAllAsync()
     {
-        return await _dbContext.ObjectVersionings.ToListAsync();
+        return await _dbContext.ObjectVersionings
+            .OrderByDescending(x => x.UpdatedOn)
+            .ToListAsync();
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<ObjectVersioning>> GetByObjectIdAsync(Guid objectId)
     {
-        return await _dbContext.ObjectVersionings.Where(x => x.ObjectId == objectId).ToListAsync();
+        return await _dbContext.ObjectVersionings
+            .Where(x => x.ObjectId == objectId)
+            .OrderByDescending(x => x.UpdatedOn)
+            .ToListAsync();
     }
 }

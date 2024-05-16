@@ -14,11 +14,9 @@ public class ObjectVersioningService : IObjectVersioningService
     }
 
     /// <inheritdoc />
-    public async Task AddVersion(string objectType, Guid objectId, Guid objectTenant, string? beforeValue, string? afterValue,
-        string updatedBy)
+    public async Task AddVersion(ObjectVersioning objectVersion)
     {
-        var objectVersioning = new ObjectVersioning(objectType, objectId, objectTenant, beforeValue, afterValue, updatedBy);
-        await _objectVersioningRepository.AddAsync(objectVersioning);
+        await _objectVersioningRepository.AddAsync(objectVersion);
     }
 
     /// <inheritdoc />
