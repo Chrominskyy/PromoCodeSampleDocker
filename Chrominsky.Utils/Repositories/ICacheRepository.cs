@@ -1,4 +1,4 @@
-namespace PromoCode.Infrastructure.Repositories;
+namespace Chrominsky.Utils.Repositories;
 
 /// <summary>
 /// Interface for cache repository operations.

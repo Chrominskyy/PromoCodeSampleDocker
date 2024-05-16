@@ -1,72 +1,108 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Chrominsky.Utils.Repositories;
+using Chrominsky.Utils.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PromoCode.Application.Services;
 using PromoCode.Infrastructure.Contexts;
 using PromoCode.Infrastructure.Repositories;
+using StackExchange.Redis;
 
 namespace PromoCode.API;
 
 public class Program
 {
     public static void Main(string[] args)
+{
+    CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+    CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Add services to the container.
+    builder.Services.AddAuthorization();
+    builder.Services.AddControllers();
+
+    // Add API versioning
+    builder.Services.AddApiVersioning(options =>
     {
-        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-        CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
-        
-        var builder = WebApplication.CreateBuilder(args);
+        options.ReportApiVersions = true;
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+    });
 
-        // Add services to the container.
-        builder.Services.AddAuthorization();
+    // Add versioned API explorer
+    builder.Services.AddVersionedApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddControllers();
-        builder.Services.AddSwaggerGen(c =>
+    // Add Swagger
+    builder.Services.AddSwaggerGen(c =>
+    {
+        var provider = builder.Services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+        foreach (var description in provider.ApiVersionDescriptions)
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "PromotionalCode API", Version = "v1" });
-        });
-
-        // Register the DbContext with the correct connection string
-        builder.Services.AddDbContext<PromoCodeDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("PromoCodeDatabase")));
-
-        builder.Services.AddScoped<IPromotionalCodeRepository, PromotionalCodeRepository>();
-        builder.Services.AddScoped<IPromotionalCodeService, PromotionalCodeService>();
-        builder.Services.AddScoped<ICacheRepository, RedisCacheRepository>();
-        builder.Services.AddScoped<ICacheService, RedisCacheService>();
-        // InstallServicesByReflection(builder.Services, "Repository");
-        // InstallServicesByReflection(builder.Services, "Service");
-        
-        var app = builder.Build();
-        // Ensure the database is created and migrated on startup
-        // using (var scope = app.Services.CreateScope())
-        // {
-        //     var services = scope.ServiceProvider;
-        //     var dbContext = services.GetRequiredService<PromoCodeDbContext>();
-        //     dbContext.Database.Migrate(); // This method will automatically apply all pending migrations
-        // }
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            c.SwaggerDoc(description.GroupName, new OpenApiInfo
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "PromotionalCode API V1");
+                Title = $"API {description.ApiVersion}",
+                Version = $"PromotionalCode API - {description.ApiVersion.ToString()}",
+                Description = description.ApiVersion.ToString() switch
+                {
+                    "1.0" => "API version 1.0 summary description. Tak jest wg dokumentacji.",
+                    "2.0" => "API version 2.0 summary description. To jest ulepszona wersja, bazując na doświadczeniu programisty.",
+                    _ => "API version description."
+                }
             });
         }
 
-        app.UseHttpsRedirection();
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        c.IncludeXmlComments(xmlPath);
+    });
 
-        app.UseAuthorization();
-        app.MapControllers();
+    builder.Services.AddDbContext<PromoCodeDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("PromoCodeDatabase")));
 
-        app.Run();
+    builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    {
+        var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+        return ConnectionMultiplexer.Connect(configuration);
+    });
+
+    builder.Services.AddScoped<IPromotionalCodeRepository, PromotionalCodeRepository>();
+    builder.Services.AddScoped<IPromotionalCodeService, PromotionalCodeService>();
+    builder.Services.AddScoped<ICacheRepository, RedisCacheRepository>();
+    builder.Services.AddScoped<ICacheService, RedisCacheService>();
+    builder.Services.AddScoped<IObjectVersioningRepository, ObjectVersioningRepository>();
+    builder.Services.AddScoped<IObjectVersioningService, ObjectVersioningService>();
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            foreach (var description in provider.ApiVersionDescriptions)
+            {
+                c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", "PromotionalCode API - " + description.GroupName.ToUpperInvariant());
+            }
+        });
     }
+
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
+    app.Run();
+}
+
 
     #region AddAutomaticServices
 

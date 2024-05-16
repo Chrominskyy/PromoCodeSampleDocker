@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using PromoCode.Domain.Models;
 using PromoCode.Infrastructure.Contexts;
@@ -10,14 +11,16 @@ namespace PromoCode.Infrastructure.Repositories;
 public class PromotionalCodeRepository : IPromotionalCodeRepository
 {
     private readonly PromoCodeDbContext _context;
+    private readonly IObjectVersioningRepository _objectVersioningRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PromotionalCodeRepository"/> class.
     /// </summary>
     /// <param name="context">The database context for interacting with the PromotionalCode entities.</param>
-    public PromotionalCodeRepository(PromoCodeDbContext context)
+    public PromotionalCodeRepository(PromoCodeDbContext context, IObjectVersioningRepository objectVersioningRepository)
     {
         _context = context;
+        _objectVersioningRepository = objectVersioningRepository;
     }
 
     /// <summary>
@@ -27,7 +30,9 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
     public async Task<IEnumerable<PromotionalCode>> GetPromotionalCodesAsync()
     {
         if (_context.PromotionalCodes!= null)
-            return await _context.PromotionalCodes.ToListAsync();
+            return await _context.PromotionalCodes
+                .Where(x => x.Status == "ACTIVE")
+                .ToListAsync();
         return new List<PromotionalCode>();
     }
 
@@ -39,7 +44,31 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
     public async Task<PromotionalCode?> GetPromotionalCodeByIdAsync(Guid id)
     {
         if (_context.PromotionalCodes!= null)
-            return await _context.PromotionalCodes.FindAsync(id);
+            return await _context.PromotionalCodes
+                .FirstOrDefaultAsync(
+                    x=> x.Id == id 
+                        && x.Code == "ACTIVE"
+                );
+        return null;
+    }
+
+    /// <summary>
+    /// Retrieves a PromotionalCode entity by its unique code from the database.
+    /// The method only returns active PromotionalCode entities.
+    /// </summary>
+    /// <param name="code">The unique code of the PromotionalCode entity.</param>
+    /// <returns>
+    /// An asynchronous task that returns the PromotionalCode entity with the specified code and status "ACTIVE", 
+    /// or null if not found.
+    /// </returns>
+    public async Task<PromotionalCode?> GetPromotionalCodeByCodeAsync(string code)
+    {
+        if(_context.PromotionalCodes!= null)
+            return await _context.PromotionalCodes
+                .FirstOrDefaultAsync(
+                    x => x.Code == code 
+                        && x.Status == "ACTIVE"
+                );
         return null;
     }
 
@@ -56,7 +85,17 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
             promotionalCode.Id = id;
             await _context.PromotionalCodes.AddAsync(promotionalCode);
             await _context.SaveChangesAsync();
+            await _objectVersioningRepository.AddAsync(
+                new ObjectVersioning(
+                    nameof(promotionalCode),
+                    id,
+                    (Guid)promotionalCode.TenantId,
+                    null,
+                    JsonSerializer.Serialize(promotionalCode),
+                    promotionalCode.CreatedBy
+                ));
         }
+        
         return id;
     }
 
@@ -67,13 +106,44 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
     /// <returns>An asynchronous task that returns the updated PromotionalCode entity.</returns>
     public async Task<PromotionalCode> UpdatePromotionalCodeAsync(PromotionalCode promotionalCode)
     {
-        if (promotionalCode!= null)
+        if (promotionalCode == null)
         {
-            _context.PromotionalCodes.Update(promotionalCode);
-            await _context.SaveChangesAsync();
+            throw new ArgumentNullException(nameof(promotionalCode));
         }
 
-        return promotionalCode;
+        var existingCode = await _context.PromotionalCodes.FindAsync(promotionalCode.Id);
+        if (existingCode == null)
+        {
+            throw new KeyNotFoundException("Promotional code not found.");
+        }
+
+        promotionalCode.UpdatedAt = DateTime.UtcNow;
+        var objectVersioning = new ObjectVersioning()
+        {
+            ObjectType = nameof(promotionalCode),
+            ObjectId = promotionalCode.Id,
+            BeforeValue = JsonSerializer.Serialize(existingCode),
+            UpdatedOn = DateTime.UtcNow,
+            UpdatedBy = promotionalCode.UpdatedBy
+        };
+        objectVersioning.ObjectTenant = (Guid)(promotionalCode.TenantId ?? existingCode.TenantId)!;
+
+        var properties = typeof(PromotionalCode).GetProperties();
+        foreach (var property in properties)
+        {
+            var newValue = property.GetValue(promotionalCode);
+            if (newValue != null)
+            {
+                property.SetValue(existingCode, newValue);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        objectVersioning.AfterValue = JsonSerializer.Serialize(existingCode);
+        await _objectVersioningRepository.AddAsync(objectVersioning);
+
+        return existingCode;
     }
 
     /// <summary>
@@ -88,9 +158,35 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
             var promotionalCode = await _context.PromotionalCodes.FindAsync(id);
             if (promotionalCode!= null)
             {
-                _context.PromotionalCodes.Remove(promotionalCode);
+                var beforeValue = JsonSerializer.Serialize(promotionalCode);
+                promotionalCode.IsDeleted = true;
+                _context.PromotionalCodes.Update(promotionalCode);
                 await _context.SaveChangesAsync();
+                await _objectVersioningRepository.AddAsync(
+                    new ObjectVersioning(
+                        nameof(promotionalCode),
+                        promotionalCode.Id,
+                        (Guid)promotionalCode.TenantId,
+                        beforeValue,
+                        JsonSerializer.Serialize(promotionalCode),
+                        promotionalCode.UpdatedBy
+                    )
+                );
             }
         }
+    }
+
+    /// <summary>
+    /// Checks the availability of a promotional code in the database.
+    /// </summary>
+    /// <param name="code">The unique code of the promotional code to check.</param>
+    /// <returns>
+    /// An asynchronous task that returns true if the code is found and has remaining uses, 
+    /// otherwise returns false.
+    /// </returns>
+    public async Task<int?> CheckCodeAvailability(string code)
+    {
+        var codeObj = await GetPromotionalCodeByCodeAsync(code);
+        return codeObj?.RemainingUses;
     }
 }

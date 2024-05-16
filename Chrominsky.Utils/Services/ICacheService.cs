@@ -1,4 +1,4 @@
-namespace PromoCode.Application.Services;
+namespace Chrominsky.Utils.Services;
 
 /// <summary>
 /// Interface for cache service.

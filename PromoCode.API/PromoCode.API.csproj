@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -17,9 +18,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Chrominsky.Utils\Chrominsky.Utils.csproj" />
       <ProjectReference Include="..\PromoCode.Application\PromoCode.Application.csproj" />
       <ProjectReference Include="..\PromoCode.Domain\PromoCode.Domain.csproj" />
       <ProjectReference Include="..\PromoCode.Infrastructure\PromoCode.Infrastructure.csproj" />

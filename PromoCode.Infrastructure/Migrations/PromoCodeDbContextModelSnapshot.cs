@@ -22,6 +22,41 @@ namespace PromoCode.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PromoCode.Domain.Models.ObjectVersioning", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AfterValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ObjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ObjectTenant")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ObjectType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ObjectVersionings");
+                });
+
             modelBuilder.Entity("PromoCode.Domain.Models.PromotionalCode", b =>
                 {
                     b.Property<Guid>("Id")
@@ -35,7 +70,11 @@ namespace PromoCode.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("MaxUses")
@@ -48,8 +87,18 @@ namespace PromoCode.Infrastructure.Migrations
                     b.Property<int>("RemainingUses")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

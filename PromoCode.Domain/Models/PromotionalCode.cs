@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using PromoCode.Domain.Models.Base;
+using Newtonsoft.Json;
+using Chrominsky.Utils.Models.Base;
 
 namespace PromoCode.Domain.Models
 {
@@ -11,16 +12,10 @@ namespace PromoCode.Domain.Models
     public class PromotionalCode : BaseDatabaseEntity
     {
         /// <summary>
-        /// Gets or sets the unique identifier of the promotional code.
-        /// </summary>
-        [Required]
-        public Guid Id { get; set; }
-
-        /// <summary>
         /// Gets or sets the name of the promotional code.
         /// </summary>
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the code of the promotional code.
@@ -31,16 +26,19 @@ namespace PromoCode.Domain.Models
         /// <summary>
         /// Gets or sets the remaining number of uses for the promotional code.
         /// </summary>
-        public int RemainingUses { get; set; }
+        [Required]
+        public int? RemainingUses { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum number of uses for the promotional code.
         /// </summary>
-        public int MaxUses { get; set; }
+        [Required]
+        public int? MaxUses { get; set; }
 
         /// <summary>
         /// Gets or sets the status of the promotional code.
         /// </summary>
-        public bool Status { get; set; }
+        [Required]
+        public string Status { get; set; }
     }
 }

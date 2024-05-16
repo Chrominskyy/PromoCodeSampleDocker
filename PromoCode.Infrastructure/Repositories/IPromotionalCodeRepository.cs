@@ -20,6 +20,8 @@ public interface IPromotionalCodeRepository
     /// <returns>An asynchronous task that returns a nullable PromotionalCode.</returns>
     Task<PromotionalCode?> GetPromotionalCodeByIdAsync(Guid id);
 
+    Task<PromotionalCode?> GetPromotionalCodeByCodeAsync(string code);
+
     /// <summary>
     /// Adds a new promotional code to the repository.
     /// </summary>
@@ -40,4 +42,6 @@ public interface IPromotionalCodeRepository
     /// <param name="id">The unique identifier of the promotional code to be deleted.</param>
     /// <returns>An asynchronous task.</returns>
     Task DeletePromotionalCodeAsync(Guid id);
+
+    Task<int?> CheckCodeAvailability(string code);
 }

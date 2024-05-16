@@ -1,6 +1,6 @@
-using PromoCode.Infrastructure.Repositories;
+using Chrominsky.Utils.Repositories;
 
-namespace PromoCode.Application.Services;
+namespace Chrominsky.Utils.Services;
 
 /// <summary>
 /// Implements the caching service using Redis as the storage backend.

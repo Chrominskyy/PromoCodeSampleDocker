@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Chrominsky.Utils.Services;
 using PromoCode.Domain.Models;
 using PromoCode.Infrastructure.Repositories;
 
@@ -11,16 +13,23 @@ public class PromotionalCodeService : IPromotionalCodeService
 {
     private readonly IPromotionalCodeRepository _promotionalCodeRepository;
     private readonly ICacheService _cacheService;
+    private readonly IObjectVersioningService _objectVersioningService;
 
     /// <summary>
     /// Initializes a new instance of the PromotionalCodeService class.
     /// </summary>
     /// <param name="promotionalCodeRepository">The repository for managing promotional codes.</param>
     /// <param name="cacheService">The service for caching promotional code data.</param>
-    public PromotionalCodeService(IPromotionalCodeRepository promotionalCodeRepository, ICacheService cacheService)
+    /// <param name="objectVersioningService"></param>
+    public PromotionalCodeService(
+        IPromotionalCodeRepository promotionalCodeRepository,
+        ICacheService cacheService,
+        IObjectVersioningService objectVersioningService
+    )
     {
         _promotionalCodeRepository = promotionalCodeRepository;
         _cacheService = cacheService;
+        _objectVersioningService = objectVersioningService;
     }
 
     /// <summary>
@@ -38,7 +47,7 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// <param name="id">The unique identifier of the promotional code.</param>
     /// <returns>An asynchronous task that returns a nullable PromotionalCode.</returns>
     public async Task<PromotionalCode?> GetPromotionalCode(Guid id)
-    {
+    { 
         return await _cacheService.GetOrAddAsync(id.ToString(),
             async () => await _promotionalCodeRepository.GetPromotionalCodeByIdAsync(id), null);
     }
@@ -59,7 +68,7 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// <param name="id">The unique identifier of the promotional code to be updated.</param>
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>An asynchronous task that returns the updated PromotionalCode.</returns>
-    public async Task<PromotionalCode> UpdatePromotionalCode(int id, PromotionalCode promotionalCode)
+    public async Task<PromotionalCode> UpdatePromotionalCode(Guid id, PromotionalCode promotionalCode)
     {
         return await _promotionalCodeRepository.UpdatePromotionalCodeAsync(promotionalCode);
     }
@@ -69,31 +78,54 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to be deleted.</param>
     /// <returns>An asynchronous task.</returns>
-    public async Task DeletePromotionalCode(Guid id)
+    public async Task<bool> DeletePromotionalCode(Guid id)
     {
         await _promotionalCodeRepository.DeletePromotionalCodeAsync(id);
         await _cacheService.RemoveAsync(id.ToString());
+        
+        return true;
     }
 
     /// <summary>
     /// Redeems a promotional code by its unique identifier.
     /// </summary>
-    /// <param name="id">The unique identifier of the promotional code to be redeemed.</param>
+    /// <param name="code"></param>
     /// <returns>An asynchronous task that returns the redeemed PromotionalCode.</returns>
     /// <exception cref="NotImplementedException">Thrown when the method is not implemented.</exception>
-    public Task<PromotionalCode> RedeemPromotionalCode(Guid id)
+    public async Task<bool> RedeemPromotionalCode(string code)
     {
-        throw new NotImplementedException();
+        // 1. Validate if the code is still available
+        var codeObj = await _promotionalCodeRepository.GetPromotionalCodeByCodeAsync(code);
+        if (codeObj is null || codeObj.RemainingUses < 1)
+            return false;
+        
+        // 2. Decrease RemainingUses
+        var newCode = new PromotionalCode()
+        {
+            RemainingUses = codeObj.RemainingUses - 1,
+            Id = codeObj.Id
+        };
+        
+        // 3. Update PromotionalCode
+        await _promotionalCodeRepository.UpdatePromotionalCodeAsync(newCode);
+        return true;
+
     }
 
-    /// <summary>
-    /// Deactivates a promotional code by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the promotional code to be deactivated.</param>
-    /// <returns>An asynchronous task that returns the deactivated PromotionalCode.</returns>
-    /// <exception cref="NotImplementedException">Thrown when the method is not implemented.</exception>
-    public Task<PromotionalCode> DeactivatePromotionalCode(Guid id)
+    /// <inheritdoc />
+    public async Task<bool> DeactivatePromotionalCode(Guid id)
     {
-        throw new NotImplementedException();
+        // 1. Validate if the code is still available
+        var codeObj = await _promotionalCodeRepository.GetPromotionalCodeByIdAsync(id);
+        if (codeObj == null) return false;
+        await _promotionalCodeRepository.UpdatePromotionalCodeAsync(
+            new PromotionalCode
+            {
+                Status = "INACTIVE",
+                Id = codeObj.Id
+            }
+        );
+        return true;
+
     }
 }

@@ -33,25 +33,20 @@ public interface IPromotionalCodeService
     /// <param name="id">The unique identifier of the promotional code to update.</param>
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>The updated promotional code.</returns>
-    Task<PromotionalCode> UpdatePromotionalCode(int id, PromotionalCode promotionalCode);
+    Task<PromotionalCode> UpdatePromotionalCode(Guid id, PromotionalCode promotionalCode);
 
     /// <summary>
     /// Deletes a promotional code by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to delete.</param>
-    Task DeletePromotionalCode(Guid id);
+    Task<bool> DeletePromotionalCode(Guid id);
 
     /// <summary>
     /// Redeems a promotional code.
     /// </summary>
-    /// <param name="id">The unique identifier of the promotional code to redeem.</param>
+    /// <param name="code"></param>
     /// <returns>The redeemed promotional code.</returns>
-    Task<PromotionalCode> RedeemPromotionalCode(Guid id);
-
-    /// <summary>
-    /// Deactivates a promotional code.
-    /// </summary>
-    /// <param name="id">The unique identifier of the promotional code to deactivate.</param>
-    /// <returns>The deactivated promotional code.</returns>
-    Task<PromotionalCode> DeactivatePromotionalCode(Guid id);
+    Task<bool> RedeemPromotionalCode(string code);
+    
+    Task<bool> DeactivatePromotionalCode(Guid id);
 }

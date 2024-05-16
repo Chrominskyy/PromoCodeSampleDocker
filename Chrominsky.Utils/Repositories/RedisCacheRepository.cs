@@ -1,7 +1,7 @@
 using System.Text.Json;
 using StackExchange.Redis;
 
-namespace PromoCode.Infrastructure.Repositories;
+namespace Chrominsky.Utils.Repositories;
 
 /// <summary>
 /// A class representing a Redis cache repository.

@@ -1,0 +1,48 @@
+using Chrominsky.Utils.Repositories.Base;
+using PromoCode.Domain.Models;
+
+namespace PromoCode.Infrastructure.Repositories;
+
+/// <summary>
+/// Interface for ObjectVersioningRepository.
+/// This interface defines the methods for interacting with the ObjectVersioning entity in the database.
+/// </summary>
+public interface IObjectVersioningRepository
+{
+    /// <summary>
+    /// Retrieves an ObjectVersioning entity by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the ObjectVersioning entity.</param>
+    /// <returns>A Task that represents the asynchronous operation, returning the retrieved ObjectVersioning entity.</returns>
+    Task<ObjectVersioning?> GetByIdAsync(Guid id);
+    
+    /// <summary>
+    /// Retrieves an ObjectVersioning entity by its associated object type, tenant, and id.
+    /// </summary>
+    /// <param name="objectType">The type of the object associated with the ObjectVersioning entity.</param>
+    /// <param name="objectTenant">The tenant of the object associated with the ObjectVersioning entity.</param>
+    /// <param name="objectId">The unique identifier of the object associated with the ObjectVersioning entity.</param>
+    /// <returns>A Task that represents the asynchronous operation, returning the retrieved ObjectVersioning entity.</returns>
+    Task<IEnumerable<ObjectVersioning>> GetByObjectAsync(string objectType, Guid objectTenant, Guid objectId);
+
+    /// <summary>
+    /// Adds a new ObjectVersioning entity to the database.
+    /// </summary>
+    /// <param name="entity">The ObjectVersioning entity to be added.</param>
+    /// <returns>A Task that represents the asynchronous operation, returning the unique identifier of the newly added entity.</returns>
+    Task<Guid> AddAsync(ObjectVersioning entity);
+
+    /// <summary>
+    /// Updates an existing ObjectVersioning entity in the database.
+    /// </summary>
+    /// <param name="entity">The updated ObjectVersioning entity.</param>
+    /// <returns>A Task that represents the asynchronous operation, returning the updated ObjectVersioning entity.</returns>
+    Task<ObjectVersioning> UpdateAsync(ObjectVersioning entity);
+
+    /// <summary>
+    /// Deletes an ObjectVersioning entity from the database by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the ObjectVersioning entity to be deleted.</param>
+    /// <returns>A Task that represents the asynchronous operation, returning a boolean indicating whether the deletion was successful.</returns>
+    Task<bool> DeleteAsync(Guid id);
+}

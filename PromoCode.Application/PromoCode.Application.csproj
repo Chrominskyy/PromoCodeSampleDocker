@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Chrominsky.Utils\Chrominsky.Utils.csproj" />
       <ProjectReference Include="..\PromoCode.Domain\PromoCode.Domain.csproj" />
       <ProjectReference Include="..\PromoCode.Infrastructure\PromoCode.Infrastructure.csproj" />
     </ItemGroup>

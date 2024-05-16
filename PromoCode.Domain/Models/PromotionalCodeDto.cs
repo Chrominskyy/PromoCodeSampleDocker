@@ -1,42 +1,37 @@
-using System.ComponentModel.DataAnnotations;
+using Chrominsky.Utils.Models.Base;
+using Newtonsoft.Json;
 
 namespace PromoCode.Domain.Models;
 
-/// <summary>
-/// Represents a DTO for promotional codes.
-/// </summary>
-public class PromotionalCodeDto
+public class PromotionalCodeDto : BaseEntity
 {
-    /// <summary>
-    /// Gets or sets the unique identifier of the promotional code.
-    /// </summary>
-    [Required]
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Gets or sets the name of the promotional code.
     /// </summary>
-    [Required]
-    public string Name { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the code of the promotional code.
     /// </summary>
-    [Required]
-    public string Code { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public string? Code { get; set; }
 
     /// <summary>
     /// Gets or sets the remaining number of uses for the promotional code.
     /// </summary>
-    public int RemainingUses { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public int? RemainingUses { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum number of uses for the promotional code.
     /// </summary>
-    public int MaxUses { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public int? MaxUses { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the promotional code is active.
+    /// Gets or sets the status of the promotional code.
     /// </summary>
-    public bool IsActive { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public string Status { get; set; }
 }
