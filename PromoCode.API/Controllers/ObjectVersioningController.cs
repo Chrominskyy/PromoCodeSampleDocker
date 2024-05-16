@@ -3,7 +3,6 @@ using PromoCode.Application.Services;
 using PromoCode.Domain.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PromoCode.API.Controllers;
 
