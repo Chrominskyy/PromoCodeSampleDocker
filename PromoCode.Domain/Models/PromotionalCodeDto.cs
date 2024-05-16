@@ -33,5 +33,5 @@ public class PromotionalCodeDto : BaseEntity
     /// Gets or sets the status of the promotional code.
     /// </summary>
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
-    public string Status { get; set; }
+    public string? Status { get; set; }
 }

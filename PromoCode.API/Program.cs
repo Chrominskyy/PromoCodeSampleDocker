@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Chrominsky.Utils.Mappers.Base;
 using Chrominsky.Utils.Repositories;
 using Chrominsky.Utils.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PromoCode.Application.Services;
+using PromoCode.Domain.Mappers;
+using PromoCode.Domain.Models;
 using PromoCode.Infrastructure.Contexts;
 using PromoCode.Infrastructure.Repositories;
 using StackExchange.Redis;
@@ -81,6 +84,7 @@ public class Program
     builder.Services.AddScoped<ICacheService, RedisCacheService>();
     builder.Services.AddScoped<IObjectVersioningRepository, ObjectVersioningRepository>();
     builder.Services.AddScoped<IObjectVersioningService, ObjectVersioningService>();
+    builder.Services.AddScoped<IBaseMapper<PromotionalCode, PromotionalCodeDto>, PromotionalCodeDtoMapper>();
 
     var app = builder.Build();
 

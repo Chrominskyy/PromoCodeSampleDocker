@@ -24,7 +24,7 @@ public abstract class BaseDatabaseEntity
     /// The date and time when the entity was created.
     /// </summary>
     [Required]
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     
     /// <summary>
     /// The date and time when the entity was last updated.
@@ -36,7 +36,7 @@ public abstract class BaseDatabaseEntity
     /// The user who created the entity.
     /// </summary>
     [Required]
-    public string? CreatedBy { get; set; }
+    public string CreatedBy { get; set; }
     
     /// <summary>
     /// The user who last updated the entity.
@@ -47,6 +47,5 @@ public abstract class BaseDatabaseEntity
     /// <summary>
     /// Indicates whether the entity has been deleted.
     /// </summary>
-    [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 }

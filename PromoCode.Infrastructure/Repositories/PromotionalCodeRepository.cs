@@ -31,7 +31,10 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
     {
         if (_context.PromotionalCodes!= null)
             return await _context.PromotionalCodes
-                .Where(x => x.Status == "ACTIVE")
+                .Where(
+                    x => x.Status == "ACTIVE" 
+                    && !x.IsDeleted
+                )
                 .ToListAsync();
         return new List<PromotionalCode>();
     }
@@ -47,7 +50,8 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
             return await _context.PromotionalCodes
                 .FirstOrDefaultAsync(
                     x=> x.Id == id 
-                        && x.Code == "ACTIVE"
+                        && x.Status == "ACTIVE"
+                        && !x.IsDeleted
                 );
         return null;
     }
@@ -66,7 +70,7 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
         if(_context.PromotionalCodes!= null)
             return await _context.PromotionalCodes
                 .FirstOrDefaultAsync(
-                    x => x.Code == code 
+                    x => x.Status == code 
                         && x.Status == "ACTIVE"
                 );
         return null;
@@ -83,6 +87,7 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
         if (promotionalCode!= null)
         {
             promotionalCode.Id = id;
+            promotionalCode.CreatedAt = DateTime.UtcNow;
             await _context.PromotionalCodes.AddAsync(promotionalCode);
             await _context.SaveChangesAsync();
             await _objectVersioningRepository.AddAsync(
@@ -134,6 +139,11 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
             var newValue = property.GetValue(promotionalCode);
             if (newValue != null)
             {
+                if(newValue is DateTime && (DateTime)newValue == DateTime.MinValue)
+                    continue;
+                if(newValue is Guid && (Guid)newValue == Guid.Empty)
+                    continue;
+                
                 property.SetValue(existingCode, newValue);
             }
         }
@@ -151,7 +161,7 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
     /// </summary>
     /// <param name="id">The unique identifier of the PromotionalCode entity to be deleted.</param>
     /// <returns>An asynchronous task that completes the deletion operation.</returns>
-    public async Task DeletePromotionalCodeAsync(Guid id)
+    public async Task DeletePromotionalCodeAsync(Guid id, string updatedBy)
     {
         if (_context.PromotionalCodes!= null)
         {
@@ -160,16 +170,18 @@ public class PromotionalCodeRepository : IPromotionalCodeRepository
             {
                 var beforeValue = JsonSerializer.Serialize(promotionalCode);
                 promotionalCode.IsDeleted = true;
+                promotionalCode.Status = "DELETED";
                 _context.PromotionalCodes.Update(promotionalCode);
                 await _context.SaveChangesAsync();
+                
                 await _objectVersioningRepository.AddAsync(
                     new ObjectVersioning(
                         nameof(promotionalCode),
                         promotionalCode.Id,
-                        (Guid)promotionalCode.TenantId,
+                        (Guid)promotionalCode.TenantId!,
                         beforeValue,
                         JsonSerializer.Serialize(promotionalCode),
-                        promotionalCode.UpdatedBy
+                        updatedBy
                     )
                 );
             }

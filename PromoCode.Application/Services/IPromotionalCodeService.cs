@@ -11,21 +11,21 @@ public interface IPromotionalCodeService
     /// Gets all active promotional codes.
     /// </summary>
     /// <returns>An enumeration of active promotional codes.</returns>
-    Task<IEnumerable<PromotionalCode>> GetActivePromotionalCodes();
+    Task<IEnumerable<PromotionalCodeDto>> GetActivePromotionalCodes();
 
     /// <summary>
     /// Gets a promotional code by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code.</param>
     /// <returns>The promotional code if found, otherwise null.</returns>
-    Task<PromotionalCode?> GetPromotionalCode(Guid id);
+    Task<PromotionalCodeDto?> GetPromotionalCode(Guid id);
 
     /// <summary>
     /// Creates a new promotional code.
     /// </summary>
     /// <param name="promotionalCode">The promotional code to create.</param>
     /// <returns>The unique identifier of the newly created promotional code.</returns>
-    Task<Guid> CreatePromotionalCode(PromotionalCode promotionalCode);
+    Task<Guid> CreatePromotionalCode(PromotionalCodeDto promotionalCode);
 
     /// <summary>
     /// Updates an existing promotional code.
@@ -33,13 +33,13 @@ public interface IPromotionalCodeService
     /// <param name="id">The unique identifier of the promotional code to update.</param>
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>The updated promotional code.</returns>
-    Task<PromotionalCode> UpdatePromotionalCode(Guid id, PromotionalCode promotionalCode);
+    Task<PromotionalCode> UpdatePromotionalCode(PromotionalCodeDto promotionalCode);
 
     /// <summary>
     /// Deletes a promotional code by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to delete.</param>
-    Task<bool> DeletePromotionalCode(Guid id);
+    Task<bool> DeletePromotionalCode(Guid id, string updatedBy);
 
     /// <summary>
     /// Redeems a promotional code.
@@ -48,5 +48,5 @@ public interface IPromotionalCodeService
     /// <returns>The redeemed promotional code.</returns>
     Task<bool> RedeemPromotionalCode(string code);
     
-    Task<bool> DeactivatePromotionalCode(Guid id);
+    Task<bool> DeactivatePromotionalCode(Guid id, string updatedBy);
 }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Chrominsky.Utils.Mappers.Base;
 using Chrominsky.Utils.Services;
 using PromoCode.Domain.Models;
 using PromoCode.Infrastructure.Repositories;
@@ -13,7 +14,8 @@ public class PromotionalCodeService : IPromotionalCodeService
 {
     private readonly IPromotionalCodeRepository _promotionalCodeRepository;
     private readonly ICacheService _cacheService;
-    private readonly IObjectVersioningService _objectVersioningService;
+    private readonly IBaseMapper<PromotionalCode, PromotionalCodeDto> _baseMapper;
+    
 
     /// <summary>
     /// Initializes a new instance of the PromotionalCodeService class.
@@ -24,21 +26,22 @@ public class PromotionalCodeService : IPromotionalCodeService
     public PromotionalCodeService(
         IPromotionalCodeRepository promotionalCodeRepository,
         ICacheService cacheService,
-        IObjectVersioningService objectVersioningService
+        IBaseMapper<PromotionalCode, PromotionalCodeDto> baseMapper
     )
     {
         _promotionalCodeRepository = promotionalCodeRepository;
         _cacheService = cacheService;
-        _objectVersioningService = objectVersioningService;
+        _baseMapper = baseMapper;
     }
 
     /// <summary>
     /// Retrieves all active promotional codes.
     /// </summary>
     /// <returns>An asynchronous task that returns an IEnumerable of PromotionalCode.</returns>
-    public async Task<IEnumerable<PromotionalCode>> GetActivePromotionalCodes()
+    public async Task<IEnumerable<PromotionalCodeDto>> GetActivePromotionalCodes()
     {
-        return await _promotionalCodeRepository.GetPromotionalCodesAsync();
+        var ret = await _promotionalCodeRepository.GetPromotionalCodesAsync();
+        return new List<PromotionalCodeDto>(ret.Select(x => _baseMapper.ToDto(x)));
     }
 
     /// <summary>
@@ -46,10 +49,12 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code.</param>
     /// <returns>An asynchronous task that returns a nullable PromotionalCode.</returns>
-    public async Task<PromotionalCode?> GetPromotionalCode(Guid id)
+    public async Task<PromotionalCodeDto?> GetPromotionalCode(Guid id)
     { 
-        return await _cacheService.GetOrAddAsync(id.ToString(),
+        var ret = await _cacheService.GetOrAddAsync(id.ToString(),
             async () => await _promotionalCodeRepository.GetPromotionalCodeByIdAsync(id), null);
+        
+        return ret != null ? _baseMapper.ToDto(ret) : null;
     }
 
     /// <summary>
@@ -57,9 +62,9 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// </summary>
     /// <param name="promotionalCode">The promotional code to be created.</param>
     /// <returns>An asynchronous task that returns the unique identifier of the newly created promotional code.</returns>
-    public async Task<Guid> CreatePromotionalCode(PromotionalCode promotionalCode)
+    public async Task<Guid> CreatePromotionalCode(PromotionalCodeDto promotionalCode)
     {
-        return await _promotionalCodeRepository.AddPromotionalCodeAsync(promotionalCode);
+        return await _promotionalCodeRepository.AddPromotionalCodeAsync(_baseMapper.ToEntity(promotionalCode));
     }
 
     /// <summary>
@@ -68,9 +73,9 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// <param name="id">The unique identifier of the promotional code to be updated.</param>
     /// <param name="promotionalCode">The updated promotional code.</param>
     /// <returns>An asynchronous task that returns the updated PromotionalCode.</returns>
-    public async Task<PromotionalCode> UpdatePromotionalCode(Guid id, PromotionalCode promotionalCode)
+    public async Task<PromotionalCode> UpdatePromotionalCode(PromotionalCodeDto promotionalCode)
     {
-        return await _promotionalCodeRepository.UpdatePromotionalCodeAsync(promotionalCode);
+        return await _promotionalCodeRepository.UpdatePromotionalCodeAsync(_baseMapper.ToEntity(promotionalCode));
     }
 
     /// <summary>
@@ -78,9 +83,9 @@ public class PromotionalCodeService : IPromotionalCodeService
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to be deleted.</param>
     /// <returns>An asynchronous task.</returns>
-    public async Task<bool> DeletePromotionalCode(Guid id)
+    public async Task<bool> DeletePromotionalCode(Guid id, string updatedBy)
     {
-        await _promotionalCodeRepository.DeletePromotionalCodeAsync(id);
+        await _promotionalCodeRepository.DeletePromotionalCodeAsync(id, updatedBy);
         await _cacheService.RemoveAsync(id.ToString());
         
         return true;
@@ -113,7 +118,7 @@ public class PromotionalCodeService : IPromotionalCodeService
     }
 
     /// <inheritdoc />
-    public async Task<bool> DeactivatePromotionalCode(Guid id)
+    public async Task<bool> DeactivatePromotionalCode(Guid id, string updatedBy)
     {
         // 1. Validate if the code is still available
         var codeObj = await _promotionalCodeRepository.GetPromotionalCodeByIdAsync(id);
@@ -122,7 +127,8 @@ public class PromotionalCodeService : IPromotionalCodeService
             new PromotionalCode
             {
                 Status = "INACTIVE",
-                Id = codeObj.Id
+                Id = codeObj.Id,
+                UpdatedBy = updatedBy
             }
         );
         return true;

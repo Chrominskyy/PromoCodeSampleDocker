@@ -41,7 +41,7 @@ public interface IPromotionalCodeRepository
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to be deleted.</param>
     /// <returns>An asynchronous task.</returns>
-    Task DeletePromotionalCodeAsync(Guid id);
+    Task DeletePromotionalCodeAsync(Guid id, string updatedBy);
 
     Task<int?> CheckCodeAvailability(string code);
 }

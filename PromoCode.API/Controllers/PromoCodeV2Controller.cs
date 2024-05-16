@@ -1,4 +1,6 @@
 
+using System.ComponentModel.DataAnnotations;
+
 namespace PromoCode.API.Controllers;
 
 using Swashbuckle.AspNetCore.Annotations;
@@ -34,8 +36,8 @@ public class PromoCodeV2Controller : ControllerBase
     /// <returns>A collection of active promotional codes.</returns>
     [HttpGet]
     [SwaggerOperation(Summary = "Gets all active promotional codes.")]
-    [SwaggerResponse(200, "A collection of active promotional codes.", typeof(IEnumerable<PromotionalCode>))]
-    public async Task<IEnumerable<PromotionalCode>> GetPromotionalCodes()
+    [SwaggerResponse(200, "A collection of active promotional codes.", typeof(IEnumerable<PromotionalCodeDto>))]
+    public async Task<IEnumerable<PromotionalCodeDto>> GetPromotionalCodes()
     {
         return await _promotionalCodeService.GetActivePromotionalCodes();
     }
@@ -47,9 +49,9 @@ public class PromoCodeV2Controller : ControllerBase
     /// <returns>The requested promotional code.</returns>
     [HttpGet("{id:guid}")]
     [SwaggerOperation(Summary = "Gets a specific promotional code by its unique identifier.")]
-    [SwaggerResponse(200, "The requested promotional code.", typeof(PromotionalCode))]
+    [SwaggerResponse(200, "The requested promotional code.", typeof(PromotionalCodeDto))]
     [SwaggerResponse(404, "Promotional code not found.")]
-    public async Task<ActionResult<PromotionalCode>> GetPromotionalCode(Guid id)
+    public async Task<ActionResult<PromotionalCodeDto>> GetPromotionalCode(Guid id)
     {
         var promotionalCode = await _promotionalCodeService.GetPromotionalCode(id);
         if (promotionalCode == null)
@@ -67,7 +69,7 @@ public class PromoCodeV2Controller : ControllerBase
     [HttpPost]
     [SwaggerOperation(Summary = "Creates a new promotional code.")]
     [SwaggerResponse(201, "The unique identifier of the newly created promotional code.", typeof(Guid))]
-    public async Task<ActionResult<Guid>> CreatePromotionalCode([FromBody] PromotionalCode promotionalCode)
+    public async Task<ActionResult<Guid>> CreatePromotionalCode([FromBody] PromotionalCodeDto promotionalCode)
     {
         var userId = await _promotionalCodeService.CreatePromotionalCode(promotionalCode);
         return CreatedAtAction(nameof(GetPromotionalCode), new { id = userId }, promotionalCode);
@@ -81,11 +83,11 @@ public class PromoCodeV2Controller : ControllerBase
     /// <returns>The updated promotional code.</returns>
     [HttpPut("{id:guid}")]
     [SwaggerOperation(Summary = "Updates an existing promotional code.")]
-    [SwaggerResponse(200, "The updated promotional code.", typeof(PromotionalCode))]
+    [SwaggerResponse(200, "The updated promotional code.", typeof(PromotionalCodeDto))]
     [SwaggerResponse(404, "Promotional code not found.")]
-    public async Task<ActionResult<PromotionalCode>> UpdatePromotionalCode(Guid id, [FromBody] PromotionalCode promotionalCode)
+    public async Task<ActionResult<PromotionalCode>> UpdatePromotionalCode([FromBody] PromotionalCodeDto promotionalCode)
     {
-        var updatedCode = await _promotionalCodeService.UpdatePromotionalCode(id, promotionalCode);
+        var updatedCode = await _promotionalCodeService.UpdatePromotionalCode(promotionalCode);
         if (updatedCode == null)
         {
             return NotFound();
@@ -102,9 +104,9 @@ public class PromoCodeV2Controller : ControllerBase
     [SwaggerOperation(Summary = "Deletes a promotional code by its unique identifier.")]
     [SwaggerResponse(204, "No content.")]
     [SwaggerResponse(404, "Promotional code not found.")]
-    public async Task<ActionResult> DeletePromotionalCode(Guid id)
+    public async Task<ActionResult> DeletePromotionalCode(Guid id, [FromBody][Required] string updatedBy)
     {
-        var result = await _promotionalCodeService.DeletePromotionalCode(id);
+        var result = await _promotionalCodeService.DeletePromotionalCode(id, updatedBy);
         if (!result)
         {
             return NotFound();
@@ -116,14 +118,15 @@ public class PromoCodeV2Controller : ControllerBase
     /// Deactivates a promotional code.
     /// </summary>
     /// <param name="id">The unique identifier of the promotional code to deactivate.</param>
+    /// <param name="updatedBy"></param>
     /// <returns>No content if the promotional code was deactivated, otherwise Not Found.</returns>
     [HttpPatch("{id:guid}/deactivate")]
     [SwaggerOperation(Summary = "Deactivates a promotional code.")]
     [SwaggerResponse(204, "No content.")]
     [SwaggerResponse(404, "Promotional code not found.")]
-    public async Task<ActionResult> DeactivatePromotionalCode(Guid id)
+    public async Task<ActionResult> DeactivatePromotionalCode(Guid id, [FromBody][Required] string updatedBy)
     {
-        var result = await _promotionalCodeService.DeactivatePromotionalCode(id);
+        var result = await _promotionalCodeService.DeactivatePromotionalCode(id, updatedBy);
         if (!result)
         {
             return NotFound();
