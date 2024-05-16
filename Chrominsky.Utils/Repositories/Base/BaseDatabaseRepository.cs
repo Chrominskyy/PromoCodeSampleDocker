@@ -3,20 +3,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chrominsky.Utils.Repositories.Base;
 
+/// <summary>
+/// Abstract class for database repository operations.
+/// </summary>
+/// <typeparam name="T">Type of entity to be handled by the repository.</typeparam>
 public abstract class BaseDatabaseRepository<T> : IBaseDatabaseRepository<T> where T : class
 {
     private readonly DbContext _dbContext;
 
-    public BaseDatabaseRepository(DbContext dbContext)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseDatabaseRepository{T}"/> class.
+    /// </summary>
+    /// <param name="dbContext">The database context to be used for database operations.</param>
+    protected BaseDatabaseRepository(DbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
+    /// <inheritdoc />
     public async Task<T> GetByIdAsync<T>(Guid id) where T : class
     {
         return await _dbContext.Set<T>().FindAsync(id);
     }
 
+    /// <inheritdoc />
     public async Task<Guid> AddAsync<T>(T entity) where T : BaseDatabaseEntity
     {
         entity.Id = Guid.NewGuid();
@@ -26,6 +36,7 @@ public abstract class BaseDatabaseRepository<T> : IBaseDatabaseRepository<T> whe
         return entity.Id;
     }
 
+    /// <inheritdoc />
     public async Task<T> UpdateAsync<T>(T entity) where T : BaseDatabaseEntity 
     {
         entity.UpdatedAt = DateTime.UtcNow;
@@ -34,6 +45,7 @@ public abstract class BaseDatabaseRepository<T> : IBaseDatabaseRepository<T> whe
         return entity;
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteAsync<T>(Guid id) where T : BaseDatabaseEntity 
     {
         T entity = await _dbContext.FindAsync<T>(id);

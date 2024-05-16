@@ -18,16 +18,7 @@ public class RedisCacheService : ICacheService
         _cacheRepository = cacheRepository;
     }
 
-    /// <summary>
-    /// Retrieves the value associated with the specified key from the cache.
-    /// If the key does not exist or the value is expired, the provided failover function is invoked to retrieve a new value.
-    /// The new value is then stored in the cache with an optional expiry time.
-    /// </summary>
-    /// <typeparam name="T">The type of the value.</typeparam>
-    /// <param name="key">The cache key.</param>
-    /// <param name="failover">The function to invoke to retrieve a new value if the key does not exist or is expired.</param>
-    /// <param name="expiry">The optional expiry time for the cached value.</param>
-    /// <returns>The cached value or the result of the failover function.</returns>
+    /// <inheritdoc />
     public async Task<T> GetOrAddAsync<T>(string key, Func<Task<T>> failover, TimeSpan? expiry = null)
     {
         var value = await _cacheRepository.GetAsync<T>(key);
@@ -42,21 +33,13 @@ public class RedisCacheService : ICacheService
         return value;
     }
 
-    /// <summary>
-    /// Removes the specified key from the cache.
-    /// </summary>
-    /// <param name="key">The cache key.</param>
-    /// <returns>A task that completes when the key has been removed from the cache.</returns>
+    /// <inheritdoc />
     public async Task<bool> RemoveAsync(string key)
     {
         return await _cacheRepository.RemoveAsync(key);
     }
 
-    /// <summary>
-    /// Checks if the specified key exists in the cache.
-    /// </summary>
-    /// <param name="key">The cache key.</param>
-    /// <returns>A task that completes with a boolean indicating whether the key exists in the cache.</returns>
+    /// <inheritdoc />
     public async Task<bool> ExistsAsync(string key)
     {
         return await _cacheRepository.ExistsAsync(key);
