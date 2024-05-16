@@ -61,13 +61,11 @@ public class ObjectVersioning
     /// <summary>
     /// Initializes a new instance of the <see cref="ObjectVersioning"/> class.
     /// </summary>
-    /// <param name="id">Unique identifier for the object versioning record.</param>
     /// <param name="objectType">Type of the object being versioned.</param>
     /// <param name="objectId">Identifier of the object being versioned.</param>
     /// <param name="objectTenant">Identifier of the tenant associated with the object.</param>
     /// <param name="beforeValue">Value of the object before the update. Can be null.</param>
     /// <param name="afterValue">Value of the object after the update.</param>
-    /// <param name="updatedOn">Timestamp of when the object was updated.</param>
     /// <param name="updatedBy">Identifier of the user who performed the update.</param>
     public ObjectVersioning(
         string objectType,

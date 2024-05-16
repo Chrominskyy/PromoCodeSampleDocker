@@ -28,8 +28,20 @@ public class ObjectVersioningService : IObjectVersioningService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ObjectVersioning>> GetVersionsByObjectId(string objectType, Guid objectTenant, Guid objectId)
+    public async Task<IEnumerable<ObjectVersioning>> GetVersionsByObject(string objectType, Guid objectTenant, Guid objectId)
     {
-        throw new NotImplementedException();
+        return await _objectVersioningRepository.GetByObjectAsync(objectType, objectTenant, objectId);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ObjectVersioning>> GetVersionsByObjectId(Guid objectId)
+    {
+        return await _objectVersioningRepository.GetByObjectIdAsync(objectId);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ObjectVersioning>> GetVersions()
+    {
+        return await _objectVersioningRepository.GetAllAsync();
     }
 }

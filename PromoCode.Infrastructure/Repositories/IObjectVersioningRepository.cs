@@ -45,4 +45,23 @@ public interface IObjectVersioningRepository
     /// <param name="id">The unique identifier of the ObjectVersioning entity to be deleted.</param>
     /// <returns>A Task that represents the asynchronous operation, returning a boolean indicating whether the deletion was successful.</returns>
     Task<bool> DeleteAsync(Guid id);
+    
+    
+    /// <summary>
+    /// Retrieves all ObjectVersioning entities from the database.
+    /// </summary>
+    /// <returns>
+    /// A Task that represents the asynchronous operation, returning an IEnumerable of ObjectVersioning entities.
+    /// </returns>
+    Task<IEnumerable<ObjectVersioning>> GetAllAsync();
+
+    /// <summary>
+    /// Retrieves all ObjectVersioning entities from the database that have the specified objectId.
+    /// </summary>
+    /// <param name="objectId">The unique identifier of the object associated with the ObjectVersioning entities.</param>
+    /// <returns>
+    /// A Task that represents the asynchronous operation, returning an IEnumerable of ObjectVersioning entities.
+    /// If no ObjectVersioning entities are found with the specified objectId, an empty IEnumerable is returned.
+    /// </returns>
+    Task<IEnumerable<ObjectVersioning>> GetByObjectIdAsync(Guid objectId);
 }

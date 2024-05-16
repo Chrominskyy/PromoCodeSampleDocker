@@ -34,5 +34,18 @@ public interface IObjectVersioningService
     /// <param name="objectTenant">The tenant identifier of the object.</param>
     /// <param name="objectId">The unique identifier of the object.</param>
     /// <returns>An enumeration of <see cref="ObjectVersioning"/> representing the versions of the object.</returns>
-    Task<IEnumerable<ObjectVersioning>> GetVersionsByObjectId(string objectType, Guid objectTenant, Guid objectId);
+    Task<IEnumerable<ObjectVersioning>> GetVersionsByObject(string objectType, Guid objectTenant, Guid objectId);
+    
+    /// <summary>
+    /// Retrieves all versions of an object by its unique identifier.
+    /// </summary>
+    /// <param name="objectId">The unique identifier of the object.</param>
+    /// <returns>An enumeration of <see cref="ObjectVersioning"/> representing the versions of the object.</returns>
+    Task<IEnumerable<ObjectVersioning>> GetVersionsByObjectId(Guid objectId);
+    
+    /// <summary>
+    /// Retrieves all versions of objects.
+    /// </summary>
+    /// <returns>An enumeration of <see cref="ObjectVersioning"/> representing the versions of all objects.</returns>
+    Task<IEnumerable<ObjectVersioning>> GetVersions();
 }

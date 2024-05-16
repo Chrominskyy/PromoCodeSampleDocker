@@ -2,6 +2,7 @@ using PromoCode.Application.Services;
 using PromoCode.Domain.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PromoCode.API.Controllers;
 
@@ -13,6 +14,10 @@ public class ObjectVersioningController : ControllerBase
 {
     private readonly IObjectVersioningService _objectVersioningService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectVersioningController"/> class.
+    /// </summary>
+    /// <param name="objectVersioningService">The object versioning service.</param>
     public ObjectVersioningController(IObjectVersioningService objectVersioningService)
     {
         _objectVersioningService = objectVersioningService;
@@ -50,42 +55,28 @@ public class ObjectVersioningController : ControllerBase
     /// <param name="objectTenant">Tenant ID of the object.</param>
     /// <param name="objectId">ID of the object.</param>
     /// <returns>A collection of object versions.</returns>
-    [HttpGet]
+    [HttpGet("{objectId:guid}")]
     [SwaggerOperation(Summary = "Gets all versions for a specific object.")]
     [SwaggerResponse(200, "A collection of object versions.", typeof(IEnumerable<ObjectVersioning>))]
     public async Task<ActionResult<IEnumerable<ObjectVersioning>>> GetVersions(
+        Guid objectId,
         [FromQuery] string objectType, 
-        [FromQuery] Guid objectTenant, 
-        [FromQuery] Guid objectId)
+        [FromQuery] Guid objectTenant
+    )
     {
         var versions = await _objectVersioningService.GetVersions(objectType, objectTenant, objectId);
         return Ok(versions);
     }
-
+    
     /// <summary>
-    /// Gets versions for a specific object by its ID.
+    /// Gets all versions from the system.
     /// </summary>
-    /// <param name="objectType">Type of the object.</param>
-    /// <param name="objectTenant">Tenant ID of the object.</param>
-    /// <param name="objectId">ID of the object.</param>
     /// <returns>A collection of object versions.</returns>
-    [HttpGet("{objectId:guid}")]
-    [SwaggerOperation(Summary = "Gets versions for a specific object by its ID.")]
+    [HttpGet]
+    [SwaggerOperation(Summary = "Gets all versions from the system.")]
     [SwaggerResponse(200, "A collection of object versions.", typeof(IEnumerable<ObjectVersioning>))]
-    [SwaggerResponse(501, "This functionality is not implemented.")]
-    public async Task<ActionResult<IEnumerable<ObjectVersioning>>> GetVersionsByObjectId(
-        [FromQuery] string objectType, 
-        [FromQuery] Guid objectTenant, 
-        [FromQuery] Guid objectId)
+    public async Task<ActionResult<IEnumerable<ObjectVersioning>>> GetVersions()
     {
-        try
-        {
-            var versions = await _objectVersioningService.GetVersionsByObjectId(objectType, objectTenant, objectId);
-            return Ok(versions);
-        }
-        catch (NotImplementedException)
-        {
-            return StatusCode(501, "This functionality is not implemented.");
-        }
+        return Ok(await _objectVersioningService.GetVersions());
     }
 }

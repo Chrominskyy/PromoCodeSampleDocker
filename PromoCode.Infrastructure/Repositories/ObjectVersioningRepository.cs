@@ -54,4 +54,16 @@ public class ObjectVersioningRepository : IObjectVersioningRepository
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ObjectVersioning>> GetAllAsync()
+    {
+        return await _dbContext.ObjectVersionings.ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ObjectVersioning>> GetByObjectIdAsync(Guid objectId)
+    {
+        return await _dbContext.ObjectVersionings.Where(x => x.ObjectId == objectId).ToListAsync();
+    }
 }
