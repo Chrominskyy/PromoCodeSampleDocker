@@ -89,6 +89,13 @@ public class Program
 
     if (app.Environment.IsDevelopment())
     {
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<PromoCodeDbContext>();
+            dbContext.Database.Migrate(); // This method will automatically apply all pending migrations
+        }
+        
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
