@@ -86,7 +86,8 @@ public class PromotionalCodeService : IPromotionalCodeService
         var newCode = new PromotionalCode()
         {
             RemainingUses = codeObj.RemainingUses - 1,
-            Id = codeObj.Id
+            Id = codeObj.Id,
+            UpdatedBy = "System - Redeemed"
         };
         
         // 3. Update PromotionalCode
