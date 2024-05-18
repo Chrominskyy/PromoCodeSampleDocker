@@ -91,7 +91,7 @@ API version 1.0 summary description
 
 
 **Responses:**
-`200 OK`: If the versioned objects are found.
+- `200 OK`: If the versioned objects are found.
 
 ### /api/v1/ObjectVersioning/{objectId}
 
