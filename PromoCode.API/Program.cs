@@ -57,8 +57,7 @@ public class Program
                 Version = $"PromotionalCode API - {description.ApiVersion.ToString()}",
                 Description = description.ApiVersion.ToString() switch
                 {
-                    "1.0" => "API version 1.0 summary description. Tak jest wg dokumentacji.",
-                    "2.0" => "API version 2.0 summary description. To jest ulepszona wersja, bazując na doświadczeniu programisty.",
+                    "1.0" => "API version 1.0 summary description",
                     _ => "API version description."
                 }
             });
