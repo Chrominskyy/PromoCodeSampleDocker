@@ -26,16 +26,17 @@ public class PromotionalCodeService : IPromotionalCodeService
         IBaseMapper<PromotionalCode, PromotionalCodeDto> baseMapper
     )
     {
-        _promotionalCodeRepository = promotionalCodeRepository;
-        _cacheService = cacheService;
-        _baseMapper = baseMapper;
+        _promotionalCodeRepository = promotionalCodeRepository ?? throw new ArgumentNullException(nameof(promotionalCodeRepository));
+        _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+        _baseMapper = baseMapper ?? throw new ArgumentNullException(nameof(baseMapper));
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<PromotionalCodeDto>> GetActivePromotionalCodes()
     {
         var ret = await _promotionalCodeRepository.GetPromotionalCodesAsync();
-        return new List<PromotionalCodeDto>(ret.Select(x => _baseMapper.ToDto(x)));
+        var response = new List<PromotionalCodeDto>(ret.Select(x => _baseMapper.ToDto(x)));
+        return response;
     }
     
     /// <inheritdoc />
@@ -91,7 +92,6 @@ public class PromotionalCodeService : IPromotionalCodeService
         // 3. Update PromotionalCode
         await _promotionalCodeRepository.UpdatePromotionalCodeAsync(newCode);
         return true;
-
     }
 
     /// <inheritdoc />
@@ -108,6 +108,5 @@ public class PromotionalCodeService : IPromotionalCodeService
             }
         );
         return true;
-
     }
 }
