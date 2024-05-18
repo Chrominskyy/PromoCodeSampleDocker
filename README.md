@@ -54,8 +54,94 @@ PromoCodeSampleDocker is a sample project for managing promotional codes using .
 - **Swagger (Swashbuckle)**
 - **Asp.Versioning**
 
-## Example Controller
-The `PromoCodeController` demonstrates typical CRUD operations for promotional codes, with annotations for Swagger documentation and versioning support.
+## API Documentation
+
+### PromoCodeController
+
+#### GetPromoCode
+**Endpoint:** `GET /api/v1/promocode/{id}`  
+**Description:** Retrieves a promotional code by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the promotional code to retrieve.
+
+**Responses:**
+- `200 OK`: If the promotional code is found.
+- `404 Not Found`: If the promotional code is not found.
+
+#### CreatePromoCode
+**Endpoint:** `POST /api/v1/promocode`  
+**Description:** Creates a new promotional code.  
+**Parameters:** 
+- `createPromoCodeDto` (CreatePromoCodeDto): The data for the new promotional code.
+
+**Responses:**
+- `201 Created`: If the promotional code is created successfully. Returns the created promotional code.
+- `400 Bad Request`: If the request data is invalid.
+
+#### UpdatePromoCode
+**Endpoint:** `PUT /api/v1/promocode/{id}`  
+**Description:** Updates an existing promotional code by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the promotional code to update.
+- `updatePromoCodeDto` (UpdatePromoCodeDto): The updated data for the promotional code.
+
+**Responses:**
+- `204 No Content`: If the promotional code is updated successfully.
+- `404 Not Found`: If the promotional code is not found.
+
+#### DeletePromoCode
+**Endpoint:** `DELETE /api/v1/promocode/{id}`  
+**Description:** Deletes a promotional code by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the promotional code to delete.
+
+**Responses:**
+- `204 No Content`: If the promotional code is deleted successfully.
+- `404 Not Found`: If the promotional code is not found.
+
+### ObjectVersioningController
+
+#### GetVersionedObject
+**Endpoint:** `GET /api/v1/objectversioning/{id}`  
+**Description:** Retrieves a versioned object by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the versioned object to retrieve.
+
+**Responses:**
+- `200 OK`: If the versioned object is found.
+- `404 Not Found`: If the versioned object is not found.
+
+#### CreateVersionedObject
+**Endpoint:** `POST /api/v1/objectversioning`  
+**Description:** Creates a new versioned object.  
+**Parameters:** 
+- `createVersionedObjectDto` (CreateVersionedObjectDto): The data for the new versioned object.
+
+**Responses:**
+- `201 Created`: If the versioned object is created successfully. Returns the created versioned object.
+- `400 Bad Request`: If the request data is invalid.
+
+#### UpdateVersionedObject
+**Endpoint:** `PUT /api/v1/objectversioning/{id}`  
+**Description:** Updates an existing versioned object by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the versioned object to update.
+- `updateVersionedObjectDto` (UpdateVersionedObjectDto): The updated data for the versioned object.
+
+**Responses:**
+- `204 No Content`: If the versioned object is updated successfully.
+- `404 Not Found`: If the versioned object is not found.
+
+#### DeleteVersionedObject
+**Endpoint:** `DELETE /api/v1/objectversioning/{id}`  
+**Description:** Deletes a versioned object by its ID.  
+**Parameters:** 
+- `id` (Guid): The ID of the versioned object to delete.
+
+**Responses:**
+- `204 No Content`: If the versioned object is deleted successfully.
+- `404 Not Found`: If the versioned object is not found.
+
 
 ## Contributing
 Feel free to fork the repository, make improvements, and submit pull requests. Contributions are welcome!
