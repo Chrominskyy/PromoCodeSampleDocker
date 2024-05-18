@@ -65,7 +65,7 @@ API version 1.0 summary description
 **Endpoint:** `POST /api/v1/objectversioning`  
 **Description:** Creates a new versioned object.  
 **Parameters:** 
-- `objectVersioning` (objectVersioning): The data for the new versioned object.
+- `objectVersioning` ([objectVersioning](PromoCode.Domain/Models/ObjectVersioning.cs): The data for the new versioned object.
 
 **Responses:**
 - `201 Created`: If the versioned object is created successfully. Returns the created versioned object.
@@ -113,7 +113,7 @@ API version 1.0 summary description
 
 #### GetPromotionalCodes
 
-**Endpoint:**  `GET /api/v1.0/promotionalcode`  
+**Endpoint:**  `GET /api/v1/promotionalcode`  
 **Description:** Retrieves all active promotional codes. 
 **Parameters:**  
 
@@ -122,10 +122,10 @@ API version 1.0 summary description
 
 #### CreatePromotionalCode
 
-**Endpoint:**  `POST /api/v1.0/promotionalcode`  
+**Endpoint:**  `POST /api/v1/promotionalcode`  
 **Description:** Creates a new promotional code. 
 **Parameters:**  
--  `promotionalCodeDto` (promotionalCodeDto): The data for the new promotional code. 
+-  `promotionalCodeDto` ([promotionalCodeDto](PromoCode.Domain/Models/PromotionalCodeDto.cs)): The data for the new promotional code. 
 
 **Responses:**  
 -  `201 Created`: If the promotional code is created successfully. Returns the created promotional code. 
@@ -147,11 +147,11 @@ API version 1.0 summary description
 
 #### UpdatePromotionalCode
 
-**Endpoint:**  `PUT /api/v1.0/promotionalcode/{id}`  
+**Endpoint:**  `PUT /api/v1/promotionalcode/{id}`  
 **Description:** Updates an existing promotional code by its ID. Updates only fields that are not null in request. 
 **Parameters:**  
 -  `id` (Guid): The ID of the promotional code to update. 
--  `promotionalCodeDto` (promotionalCodeDto): The updated data for the promotional code. 
+-  `promotionalCodeDto` ([promotionalCodeDto](PromoCode.Domain/Models/PromotionalCodeDto.cs)): The updated data for the promotional code. 
 
 **Responses:**  
 -  `204 No Content`: If the promotional code is updated successfully. 
@@ -172,7 +172,7 @@ API version 1.0 summary description
 
 #### GetPromotionalCode
 
-**Endpoint:**  `GET /api/v1.0/promotionalcode/{id}`  
+**Endpoint:**  `GET /api/v1/promotionalcode/{id}`  
 **Description:** Retrieves a promotional code by its ID. 
 **Parameters:**  
 -  `id` (Guid): The ID of the promotional code to retrieve. 
@@ -183,7 +183,7 @@ API version 1.0 summary description
 
 #### DeletePromotionalCode
 
-**Endpoint:**  `DELETE /api/v1.0/promotionalcode/{id}`  
+**Endpoint:**  `DELETE /api/v1/promotionalcode/{id}`  
 **Description:** Deletes a promotional code by its ID. 
 **Parameters:**  
 -  `id` (Guid): The ID of the promotional code to delete. 
@@ -196,7 +196,7 @@ API version 1.0 summary description
 
 #### DeactivatePromotionalCode
 
-**Endpoint:**  `PATCH /api/v1.0/promotionalcode/{id}`  
+**Endpoint:**  `PATCH /api/v1/promotionalcode/{id}`  
 **Description:** Deactivates a promotional code by its ID. 
 **Parameters:**  
 -  `id` (Guid): The ID of the promotional code to deactivate. 
@@ -209,7 +209,7 @@ API version 1.0 summary description
 
 #### RedeemPromotionalCode
 
-**Endpoint:**  `GET /api/v1.0/promotionalcode/{code}/redeem`  
+**Endpoint:**  `GET /api/v1/promotionalcode/{code}/redeem`  
 **Description:** Redeems a promotional code by its ID. 
 **Parameters:**  
 -  `code` (string): The code of the promotional code to redeem. 
