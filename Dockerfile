@@ -16,12 +16,12 @@ WORKDIR /src/PromoCode.API
 RUN dotnet build "PromoCode.API.csproj" -c Release -o /app/build
 
 # Publish the project
-RUN dotnet publish "PromoCode.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "PromoCode.API.csproj" -c Release -o /app
 
 # Stage 2: Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-COPY --from=build-env /app/publish .
-EXPOSE 8080
+COPY --from=build-env /app .
+EXPOSE 80
 EXPOSE 443
 ENTRYPOINT ["dotnet", "PromoCode.API.dll"]

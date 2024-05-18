@@ -54,7 +54,7 @@ namespace PromoCode.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ObjectVersionings");
+                    b.ToTable("ObjectVersionings", (string)null);
                 });
 
             modelBuilder.Entity("PromoCode.Domain.Models.PromotionalCode", b =>
@@ -104,7 +104,7 @@ namespace PromoCode.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PromotionalCodes");
+                    b.ToTable("PromotionalCodes", (string)null);
                 });
 #pragma warning restore 612, 618
         }
